@@ -1,0 +1,82 @@
+﻿using System;
+using System.Collections.Generic;
+using SimpleAMQP.Ex;
+using SimpleAMQP.Frames;
+
+namespace SimpleAMQP
+{
+    internal class MethodFrame
+    {
+        public FrameType Type { get; set; } = FrameType.Method;
+
+        public short Channel { get; set; }
+
+        public short ClassId { get; set; }
+
+        public short MethodId { get; set; }
+
+        public IAMQPMethod Method { get; set; }
+
+        public MethodFrame(short channel, IAMQPMethod method)
+        {
+            Channel = channel;
+            ClassId = method.ClassId;
+            MethodId = method.MethodId;
+            Method = method;
+        }
+
+        public MethodFrame(Span<byte> bytes)
+        {
+            var channelBytes = bytes.Slice(1, 2);
+
+            if (BitConverter.IsLittleEndian)
+                channelBytes.Reverse();
+
+            Channel = BitConverter.ToInt16(channelBytes);
+
+            var sizeBytes = bytes.Slice(3, 4);
+
+            if (BitConverter.IsLittleEndian)
+                sizeBytes.Reverse();
+
+            var size = BitConverter.ToInt32(sizeBytes);
+
+            var classIdBytes = bytes.Slice(7, 2);
+
+            if (BitConverter.IsLittleEndian)
+                classIdBytes.Reverse();
+
+            ClassId = BitConverter.ToInt16(classIdBytes);
+
+            var methodIdBytes = bytes.Slice(9, 2);
+
+            if (BitConverter.IsLittleEndian)
+                methodIdBytes.Reverse();
+
+            MethodId = BitConverter.ToInt16(methodIdBytes);
+
+            var argumentsBytes = bytes.Slice(11, size - 4);
+
+            Method = new ConnectionStart(argumentsBytes);
+        }
+
+        public byte[] Marshall()
+        {
+            var bytes = new List<byte>();
+
+            bytes.Add((byte) Type);
+
+            var channelBytes = Channel.ToBytes();
+            bytes.AddRange(channelBytes);
+
+            var methodBytes = Method.Marshall();
+            var size = methodBytes.Length.ToBytes();
+            bytes.AddRange(size);
+            bytes.AddRange(methodBytes);
+
+            bytes.Add(206);
+
+            return bytes.ToArray();
+        }
+    }
+}
