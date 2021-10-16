@@ -163,14 +163,11 @@ namespace SimpleAMQP.Ex
         {
             var longStringLengthBytes = bytes.Slice(0, 4);
 
-            if (BitConverter.IsLittleEndian)
-                longStringLengthBytes.Reverse();
+            longStringLengthBytes.ExtractLongUInt(out var longStringLength);
 
-            var longStringLength = BitConverter.ToInt32(longStringLengthBytes);
+            item = Encoding.UTF8.GetString(bytes.Slice(4, (int) longStringLength));
 
-            item = Encoding.UTF8.GetString(bytes.Slice(4, longStringLength));
-
-            return bytes.Slice(4 + longStringLength);
+            return bytes.Slice(4 + (int) longStringLength);
         }
     }
 }

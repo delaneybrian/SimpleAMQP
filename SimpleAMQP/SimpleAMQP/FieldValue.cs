@@ -13,7 +13,7 @@ namespace SimpleAMQP
 
         public object Value { get; private set; }
 
-        private FieldValue(object value)
+        public FieldValue(object value)
         {
             Value = value;
         }
@@ -127,7 +127,7 @@ namespace SimpleAMQP
 
                 var valueString = (string)Value;
 
-                var stringBytes = Encoding.UTF8.GetBytes(valueString);
+                var stringBytes = valueString.ToLongStringBytes();
                 bytes.AddRange(stringBytes);
             }
             else if (type == typeof(bool))

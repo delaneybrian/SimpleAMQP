@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SimpleAMQP.Ex;
 
 namespace SimpleAMQP
 {
@@ -10,12 +12,12 @@ namespace SimpleAMQP
         {
             var bytes = Encoding.UTF8.GetBytes(input).ToList();
 
-            var byteCount = bytes.LongCount();
+            var byteCount = bytes.Count();
 
             if (byteCount > Int32.MaxValue)
                 throw new ArgumentException();
 
-            var stringLength = BitConverter.GetBytes(byteCount).ToList();
+            var stringLength = byteCount.ToBytes().ToList();
 
             stringLength.AddRange(bytes);
 
@@ -26,9 +28,9 @@ namespace SimpleAMQP
         {
             var bytes = Encoding.UTF8.GetBytes(input).ToList();
 
-            var byteCount = bytes.Count();
+            var byteCount = (byte) bytes.Count();
 
-            var stringLength = BitConverter.GetBytes(byteCount).ToList();
+            var stringLength = new List<byte> { byteCount };
 
             stringLength.AddRange(bytes);
 

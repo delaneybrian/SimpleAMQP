@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SimpleAMQP.Ex;
 
 namespace SimpleAMQP
 {
@@ -41,14 +42,17 @@ namespace SimpleAMQP
         {
             var bytes = new List<byte>();
 
-            var classIdBytes = BitConverter.GetBytes(ClassId);
+            var classIdBytes = ClassId.ToBytes();
             bytes.AddRange(classIdBytes);
 
-            var methodIdBytes = BitConverter.GetBytes(MethodId);
+            var methodIdBytes = MethodId.ToBytes();
             bytes.AddRange(methodIdBytes);
 
             var clientPropertiesBytes = ClientProperties.Marshall();
             bytes.AddRange(clientPropertiesBytes);
+
+            var mechanismBytes = Mechanism.ToShortStringBytes();
+            bytes.AddRange(mechanismBytes);
 
             var responseBytes = Response.ToLongStringBytes();
             bytes.AddRange(responseBytes);

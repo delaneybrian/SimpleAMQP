@@ -61,19 +61,16 @@ namespace SimpleAMQP
                 bytes.AddRange(fieldValueBytes);
             }
 
-            var numberOfBytes = (ulong) bytes.Count;
+            var numberOfBytes = (uint) bytes.Count;
 
-            var numberOfBytesBytes = BitConverter.GetBytes(numberOfBytes);
-
-            if (BitConverter.IsLittleEndian)
-                numberOfBytesBytes.Reverse();
+            var numberOfBytesBytes = numberOfBytes.ToBytes();
 
             var finalBytes = new List<byte>();
 
             finalBytes.AddRange(numberOfBytesBytes);
             finalBytes.AddRange(bytes);
 
-            return bytes.ToArray();
+            return finalBytes.ToArray();
         }
     }
 }

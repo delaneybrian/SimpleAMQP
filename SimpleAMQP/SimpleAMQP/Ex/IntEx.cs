@@ -9,10 +9,9 @@ namespace SimpleAMQP.Ex
         {
             var intBytes = BitConverter.GetBytes(value);
 
-            if (BitConverter.IsLittleEndian)
-                intBytes.Reverse();
-
-            return intBytes;
+            return BitConverter.IsLittleEndian
+                ? intBytes.Reverse().ToArray()
+                : intBytes;
         }
     }
 }

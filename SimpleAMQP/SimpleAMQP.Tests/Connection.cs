@@ -1,10 +1,9 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
+using SimpleAMQP.Ex;
 
 namespace SimpleAMQP.Tests
 {
@@ -37,12 +36,29 @@ namespace SimpleAMQP.Tests
 
             var connectionStartMethod = methodFrame.Method as ConnectionStart;
 
-            var connectionStartOk = new ConnectionStartOk(new FieldTable(), connectionStartMethod.Mechanisms, "",
+            var fieldTable = new FieldTable();
+
+            fieldTable.Add("information", new FieldValue("Licensed under the MPL 2.0. Website: https://rabbitmq.com"));
+
+            var connectionStartOk = new ConnectionStartOk(fieldTable, connectionStartMethod.Mechanisms, "",
                 connectionStartMethod.Locals);
 
             var startOkMethodFrame = new MethodFrame(0, connectionStartOk);
 
             var startOkMethodFrameBytes = startOkMethodFrame.Marshall();
+
+            var byte33s= new Span<byte>(startOkMethodFrameBytes).Slice(11);
+
+            foreach (var bbb in byte33s)
+            {
+                Debug.WriteLine($"{bbb},");
+            }
+
+            var a = FieldTable.Extract(byte33s, out var fieldTable333);
+
+            a = a.ExtractShortString(out var b);
+            a = a.ExtractLongString(out var c);
+            a = a.ExtractShortString(out var db);
 
             _ = sender.Send(startOkMethodFrameBytes);
 
