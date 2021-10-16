@@ -40,25 +40,25 @@ namespace SimpleAMQP.Tests
 
             fieldTable.Add("information", new FieldValue("Licensed under the MPL 2.0. Website: https://rabbitmq.com"));
 
-            var connectionStartOk = new ConnectionStartOk(fieldTable, connectionStartMethod.Mechanisms, "",
+            var connectionStartOk = new ConnectionStartOk(fieldTable, "PLAIN", "null",
                 connectionStartMethod.Locals);
 
             var startOkMethodFrame = new MethodFrame(0, connectionStartOk);
 
             var startOkMethodFrameBytes = startOkMethodFrame.Marshall();
 
-            var byte33s= new Span<byte>(startOkMethodFrameBytes).Slice(11);
+            //var byte33s= new Span<byte>(startOkMethodFrameBytes).Slice(11);
 
-            foreach (var bbb in byte33s)
-            {
-                Debug.WriteLine($"{bbb},");
-            }
+            //foreach (var bbb in byte33s)
+            //{
+            //    Debug.WriteLine($"{bbb},");
+            //}
 
-            var a = FieldTable.Extract(byte33s, out var fieldTable333);
+            //var a = FieldTable.Extract(byte33s, out var fieldTable333);
 
-            a = a.ExtractShortString(out var b);
-            a = a.ExtractLongString(out var c);
-            a = a.ExtractShortString(out var db);
+            //a = a.ExtractShortString(out var b);
+            //a = a.ExtractLongString(out var c);
+            //a = a.ExtractShortString(out var db);
 
             _ = sender.Send(startOkMethodFrameBytes);
 

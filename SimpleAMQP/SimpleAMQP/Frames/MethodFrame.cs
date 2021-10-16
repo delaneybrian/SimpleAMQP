@@ -55,9 +55,9 @@ namespace SimpleAMQP
 
             MethodId = BitConverter.ToInt16(methodIdBytes);
 
-            var argumentsBytes = bytes.Slice(11, size - 4);
+            var methodBytes = bytes.Slice(7, size);
 
-            Method = new ConnectionStart(argumentsBytes);
+            Method = new ConnectionStart(methodBytes);
         }
 
         public byte[] Marshall()

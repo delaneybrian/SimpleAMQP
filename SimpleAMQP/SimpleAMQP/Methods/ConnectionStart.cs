@@ -35,10 +35,10 @@ namespace SimpleAMQP
 
         public ConnectionStart(Span<byte> msg)
         {
-            MajorVersion = msg[0];
-            MinorVersion = msg[1];
+            MajorVersion = msg[4];
+            MinorVersion = msg[5];
 
-            msg = FieldTable.Extract(msg.Slice(2), out var fieldTable);
+            msg = FieldTable.Extract(msg.Slice(6), out var fieldTable);
 
             ServerProperties = fieldTable.PeerProperties;
 

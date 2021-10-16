@@ -7,11 +7,11 @@ namespace SimpleAMQP.Ex
     {
         public static byte[] ToBytes(this uint value)
         {
-            var ulongBytes = BitConverter.GetBytes(value);
+            var uIntBytes = BitConverter.GetBytes(value);
 
             return BitConverter.IsLittleEndian
-                ? ulongBytes.Reverse().ToArray()
-                : ulongBytes;
+                ? uIntBytes.Reverse().ToArray()
+                : uIntBytes;
         }
     }
 }

@@ -22,15 +22,10 @@ namespace SimpleAMQP
         public static Span<byte> Extract(Span<byte> bytes, out FieldTable fieldTable)
         {
             fieldTable = new FieldTable();
+            
+            bytes = bytes.ExtractLongUInt(out var fieldTableLength);
 
-            var fieldTableLengthBytes = bytes.Slice(0, 4);
-
-            if (BitConverter.IsLittleEndian)
-                fieldTableLengthBytes.Reverse();
-
-            var fieldTableLengthBytesLength = BitConverter.ToInt32(fieldTableLengthBytes);
-
-            var fieldTableBytes = bytes.Slice(4, fieldTableLengthBytesLength);
+            var fieldTableBytes = bytes.Slice(0, (int) fieldTableLength);
 
             while (fieldTableBytes.Length > 0)
             {
@@ -41,7 +36,7 @@ namespace SimpleAMQP
                 fieldTable.Add(key, fieldValue);
             }
 
-            return bytes.Slice(4 + fieldTableLengthBytesLength);
+            return bytes.Slice((int) fieldTableLength);
         }
 
         public byte[] Marshall()
