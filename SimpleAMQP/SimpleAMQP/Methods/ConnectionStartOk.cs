@@ -30,7 +30,7 @@ namespace SimpleAMQP
             Locale = locale;
         }
 
-        public void Construct(byte[] bytes)
+        public static IAMQPMethod Construct(Span<byte> bytes)
         {
             throw new NotImplementedException();
         }

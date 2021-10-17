@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using System;
 
 namespace SimpleAMQP
 {
@@ -11,7 +11,5 @@ namespace SimpleAMQP
         bool IsFor(int classId, int methodId);
 
         byte[] Marshall();
-
-        void Construct(byte[] bytes);
     }
 }

@@ -1,9 +1,6 @@
-﻿using NUnit.Framework;
-using System;
-using System.Diagnostics;
-using System.Net;
-using System.Net.Sockets;
-using SimpleAMQP.Ex;
+﻿using System.Net.Sockets;
+using NUnit.Framework;
+using SimpleAMQP.Methods;
 
 namespace SimpleAMQP.Tests
 {
@@ -15,19 +12,14 @@ namespace SimpleAMQP.Tests
         {
             byte[] bytes = new byte[1028];
 
-            var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            var ipAddress = ipHostInfo.AddressList[0];
-            var remoteEP = new IPEndPoint(ipAddress, 5672);
+            var tcpClient = new TcpClient("localhost", 5672);
 
-            // Create a TCP/IP  socket.  
-            Socket sender = new Socket(ipAddress.AddressFamily,
-                SocketType.Stream, ProtocolType.Tcp);
+            var stream = tcpClient.GetStream();
 
-            sender.Connect(remoteEP);
+            var sender = stream.Socket;
 
             var protocolHeaderBytes = new byte[] { 65, 77, 81, 80, 0, 0, 9, 1 };
 
-            // Send the data through the socket.  
             _ = sender.Send(protocolHeaderBytes);
             
             _ = sender.Receive(bytes);
@@ -40,29 +32,21 @@ namespace SimpleAMQP.Tests
 
             fieldTable.Add("information", new FieldValue("Licensed under the MPL 2.0. Website: https://rabbitmq.com"));
 
-            var connectionStartOk = new ConnectionStartOk(fieldTable, "PLAIN", "null",
+            var connectionStartOk = new ConnectionStartOk(fieldTable, "PLAIN", "\0guest\0guest",
                 connectionStartMethod.Locals);
 
             var startOkMethodFrame = new MethodFrame(0, connectionStartOk);
 
             var startOkMethodFrameBytes = startOkMethodFrame.Marshall();
 
-            //var byte33s= new Span<byte>(startOkMethodFrameBytes).Slice(11);
-
-            //foreach (var bbb in byte33s)
-            //{
-            //    Debug.WriteLine($"{bbb},");
-            //}
-
-            //var a = FieldTable.Extract(byte33s, out var fieldTable333);
-
-            //a = a.ExtractShortString(out var b);
-            //a = a.ExtractLongString(out var c);
-            //a = a.ExtractShortString(out var db);
-
             _ = sender.Send(startOkMethodFrameBytes);
 
             _ = sender.Receive(bytes);
+
+
+            var connectionSecureMethodFrame = new MethodFrame(bytes);
+
+            var connectionSecureMethod = methodFrame.Method as ConnectionSecure;
         }
     }
 }

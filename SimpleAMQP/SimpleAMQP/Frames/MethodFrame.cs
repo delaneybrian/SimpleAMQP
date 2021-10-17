@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using SimpleAMQP.Ex;
 using SimpleAMQP.Frames;
+using SimpleAMQP.Methods;
 
 namespace SimpleAMQP
 {
@@ -57,14 +58,18 @@ namespace SimpleAMQP
 
             var methodBytes = bytes.Slice(7, size);
 
-            Method = new ConnectionStart(methodBytes);
+            if (MethodId == 10)
+                Method = ConnectionStart.Construct(methodBytes);
+
+            if (MethodId == 20)
+                Method = ConnectionSecure.Construct(methodBytes);
         }
 
         public byte[] Marshall()
         {
             var bytes = new List<byte>();
 
-            bytes.Add((byte) Type);
+            bytes.Add((byte)Type);
 
             var channelBytes = Channel.ToBytes();
             bytes.AddRange(channelBytes);

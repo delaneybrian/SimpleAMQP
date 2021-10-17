@@ -28,25 +28,25 @@ namespace SimpleAMQP
             throw new NotImplementedException();
         }
 
-        public void Construct(byte[] bytes)
+        public static IAMQPMethod Construct(Span<byte> bytes)
         {
-            throw new NotImplementedException();
+            return new ConnectionStart(bytes);
         }
 
-        public ConnectionStart(Span<byte> msg)
+        private ConnectionStart(Span<byte> bytes)
         {
-            MajorVersion = msg[4];
-            MinorVersion = msg[5];
+            MajorVersion = bytes[4];
+            MinorVersion = bytes[5];
 
-            msg = FieldTable.Extract(msg.Slice(6), out var fieldTable);
+            bytes = FieldTable.Extract(bytes.Slice(6), out var fieldTable);
 
             ServerProperties = fieldTable.PeerProperties;
 
-            msg = msg.ExtractLongString(out var _mechanisms);
+            bytes = bytes.ExtractLongString(out var _mechanisms);
 
             Mechanisms = _mechanisms;
 
-            msg = msg.ExtractLongString(out var _locals);
+            bytes = bytes.ExtractLongString(out var _locals);
 
             Locals = _locals;
         }
