@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+using Microsoft.VisualBasic;
 using NUnit.Framework;
 using SimpleAMQP.Methods;
 
@@ -43,10 +44,22 @@ namespace SimpleAMQP.Tests
 
             _ = sender.Receive(bytes);
 
-
             var connectionSecureMethodFrame = new MethodFrame(bytes);
 
-            var connectionSecureMethod = methodFrame.Method as ConnectionSecure;
+            var connectionTuneMethod = connectionSecureMethodFrame.Method as ConnectionTune;
+
+            var connectionTuneOkMethod = ConnectionTuneOk.Construct(connectionTuneMethod.MaxChannels,
+                connectionTuneMethod.MaxFrameSize, connectionTuneMethod.HeartBeatDelay);
+
+            var connectionTuneOkMethodFrame = new MethodFrame(0, connectionTuneOkMethod);
+
+            var bbbbb = connectionTuneOkMethodFrame.Marshall();
+
+            var aere = ConnectionTuneOk.Construct(bbbbb);
+
+            _ = sender.Send(connectionTuneOkMethodFrame.Marshall());
+
+
         }
     }
 }

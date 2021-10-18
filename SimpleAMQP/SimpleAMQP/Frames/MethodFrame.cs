@@ -63,6 +63,9 @@ namespace SimpleAMQP
 
             if (MethodId == 20)
                 Method = ConnectionSecure.Construct(methodBytes);
+
+            if (MethodId == 30)
+                Method = ConnectionTune.Construct(methodBytes);
         }
 
         public byte[] Marshall()
