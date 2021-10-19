@@ -13,10 +13,8 @@ namespace SimpleAMQP.Methods
             throw new NotImplementedException();
         }
 
-        public bool IsFor(int classId, int methodId)
-        {
-            throw new NotImplementedException();
-        }
+        public bool IsFor(int classId, int methodId) =>
+            classId == ClassId && methodId == MethodId;
 
         public byte[] Marshall()
         {

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Runtime.InteropServices.ComTypes;
 using SimpleAMQP.Ex;
 using SimpleAMQP.Frames;
 using SimpleAMQP.Methods;
@@ -28,35 +30,20 @@ namespace SimpleAMQP
 
         public MethodFrame(Span<byte> bytes)
         {
-            var channelBytes = bytes.Slice(1, 2);
+            bytes = bytes.Slice(1);
 
-            if (BitConverter.IsLittleEndian)
-                channelBytes.Reverse();
+            bytes = bytes.ExtractShortInt(out var channel);
+            Channel = channel;
 
-            Channel = BitConverter.ToInt16(channelBytes);
+            bytes = bytes.ExtractLongInt(out var size);
 
-            var sizeBytes = bytes.Slice(3, 4);
+            bytes[..2].ExtractShortInt(out var classId);
+            ClassId = classId;
 
-            if (BitConverter.IsLittleEndian)
-                sizeBytes.Reverse();
+            bytes[2..4].ExtractShortInt(out var methodId);
+            MethodId = methodId;
 
-            var size = BitConverter.ToInt32(sizeBytes);
-
-            var classIdBytes = bytes.Slice(7, 2);
-
-            if (BitConverter.IsLittleEndian)
-                classIdBytes.Reverse();
-
-            ClassId = BitConverter.ToInt16(classIdBytes);
-
-            var methodIdBytes = bytes.Slice(9, 2);
-
-            if (BitConverter.IsLittleEndian)
-                methodIdBytes.Reverse();
-
-            MethodId = BitConverter.ToInt16(methodIdBytes);
-
-            var methodBytes = bytes.Slice(7, size);
+            var methodBytes = bytes.Slice(0, size);
 
             if (MethodId == 10)
                 Method = ConnectionStart.Construct(methodBytes);
@@ -69,6 +56,9 @@ namespace SimpleAMQP
 
             if (MethodId == 31)
                 Method = ConnectionTuneOk.Construct(methodBytes);
+
+            if (MethodId == 41)
+                Method = ConnectionOpenOk.Construct(methodBytes);
         }
 
         public byte[] Marshall()
