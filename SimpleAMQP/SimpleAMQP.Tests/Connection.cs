@@ -42,22 +42,27 @@ namespace SimpleAMQP.Tests
 
             _ = sender.Send(startOkMethodFrameBytes);
 
+            bytes = new byte[1028];
             _ = sender.Receive(bytes);
 
-            var connectionSecureMethodFrame = new MethodFrame(bytes);
+            var connectionTuneMethodFrame = new MethodFrame(bytes);
 
-            var connectionTuneMethod = connectionSecureMethodFrame.Method as ConnectionTune;
+            var connectionTuneMethod = connectionTuneMethodFrame.Method as ConnectionTune;
 
             var connectionTuneOkMethod = ConnectionTuneOk.Construct(connectionTuneMethod.MaxChannels,
                 connectionTuneMethod.MaxFrameSize, connectionTuneMethod.HeartBeatDelay);
 
             var connectionTuneOkMethodFrame = new MethodFrame(0, connectionTuneOkMethod);
-
             var bbbbb = connectionTuneOkMethodFrame.Marshall();
 
-            var aere = ConnectionTuneOk.Construct(bbbbb);
+            var methodfff = new MethodFrame(bbbbb);
 
             _ = sender.Send(connectionTuneOkMethodFrame.Marshall());
+            
+            bytes = new byte[1028];
+            _ = sender.Receive(bytes);
+
+            var connectionSecureMethodFrame = new MethodFrame(bytes);
 
 
         }

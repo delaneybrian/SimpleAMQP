@@ -11,6 +11,13 @@ namespace SimpleAMQP.Methods
 
         public string Challenge { get; private set; }
 
+        public ConnectionSecure(Span<byte> bytes)
+        {
+            bytes = bytes.ExtractLongString(out var challenge);
+
+            Challenge = challenge;
+        }
+
         public static IAMQPMethod Construct(Span<byte> bytes)
         {
             return new ConnectionSecure(bytes);
@@ -24,13 +31,6 @@ namespace SimpleAMQP.Methods
         public byte[] Marshall()
         {
             throw new NotImplementedException();
-        }
-
-        public ConnectionSecure(Span<byte> bytes)
-        {
-            bytes = bytes.ExtractLongString(out var challenge);
-
-            Challenge = challenge;
         }
     }
 }

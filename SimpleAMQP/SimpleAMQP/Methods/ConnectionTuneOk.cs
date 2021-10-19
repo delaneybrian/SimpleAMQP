@@ -59,7 +59,7 @@ namespace SimpleAMQP.Methods
             var classIdBytes = ClassId.ToBytes();
             bytes.AddRange(classIdBytes);
 
-            var methodIdBytes = ClassId.ToBytes();
+            var methodIdBytes = MethodId.ToBytes();
             bytes.AddRange(methodIdBytes);
 
             var maxChannelsBytes = MaxChannels.ToBytes();
