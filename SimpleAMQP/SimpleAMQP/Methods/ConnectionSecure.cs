@@ -3,7 +3,7 @@ using SimpleAMQP.Ex;
 
 namespace SimpleAMQP.Methods
 {
-    internal class ConnectionSecure : IAMQPMethod
+    internal class ConnectionSecure : IMarshallableMethod
     {
         public short ClassId => 10;
 
@@ -18,12 +18,12 @@ namespace SimpleAMQP.Methods
             Challenge = challenge;
         }
 
-        public static IAMQPMethod Construct(Span<byte> bytes)
+        public static IMarshallableMethod Construct(Span<byte> bytes)
         {
             return new ConnectionSecure(bytes);
         }
 
-        public bool IsFor(int classId, int methodId)
+        public bool IsFor(short classId, short methodId)
         {
             throw new NotImplementedException();
         }

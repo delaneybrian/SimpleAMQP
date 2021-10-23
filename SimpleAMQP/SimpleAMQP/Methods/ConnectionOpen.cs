@@ -3,7 +3,7 @@ using SimpleAMQP.Ex;
 
 namespace SimpleAMQP.Methods
 {
-    internal class ConnectionOpen : IAMQPMethod
+    internal class ConnectionOpen : IMarshallableMethod
     {
         public short ClassId => 10;
 
@@ -16,12 +16,12 @@ namespace SimpleAMQP.Methods
             Path = path;
         }
 
-        public static IAMQPMethod Construct(string path)
+        public static IMarshallableMethod Construct(string path)
         {
             return new ConnectionOpen(path);
         }
 
-        public bool IsFor(int classId, int methodId) =>
+        public bool IsFor(short classId, short methodId) =>
             classId == ClassId && methodId == MethodId;
 
         public byte[] Marshall()

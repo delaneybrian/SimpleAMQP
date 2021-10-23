@@ -18,9 +18,9 @@ namespace SimpleAMQP
 
         public short MethodId { get; set; }
 
-        public IAMQPMethod Method { get; set; }
+        public IMarshallableMethod Method { get; set; }
 
-        public MethodFrame(short channel, IAMQPMethod method)
+        public MethodFrame(short channel, IMarshallableMethod method)
         {
             Channel = channel;
             ClassId = method.ClassId;

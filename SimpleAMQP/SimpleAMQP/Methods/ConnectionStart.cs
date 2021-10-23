@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using SimpleAMQP.Ex;
+using SimpleAMQP.Methods;
 
 namespace SimpleAMQP
 {
-    internal class ConnectionStart : IAMQPMethod
+    internal class ConnectionStart : IMarshallableMethod
     {
         public byte MajorVersion { get; private set; }
 
@@ -20,7 +21,7 @@ namespace SimpleAMQP
 
         public short MethodId { get; } = 10;
 
-        public bool IsFor(int classId, int methodId) =>
+        public bool IsFor(short classId, short methodId) =>
             classId == ClassId && methodId == MethodId;
 
         public byte[] Marshall()
@@ -28,7 +29,7 @@ namespace SimpleAMQP
             throw new NotImplementedException();
         }
 
-        public static IAMQPMethod Construct(Span<byte> bytes)
+        public static IMarshallableMethod Construct(Span<byte> bytes)
         {
             return new ConnectionStart(bytes);
         }

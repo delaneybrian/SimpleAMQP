@@ -3,7 +3,7 @@ using SimpleAMQP.Ex;
 
 namespace SimpleAMQP.Methods
 {
-    internal class ConnectionTune : IAMQPMethod
+    internal class ConnectionTune : IMarshallableMethod
     {
         public short ClassId => 10;
 
@@ -32,12 +32,12 @@ namespace SimpleAMQP.Methods
             HeartBeatDelay = heartBeatDelay;
         }
 
-        public static IAMQPMethod Construct(Span<byte> bytes)
+        public static IMarshallableMethod Construct(Span<byte> bytes)
         {
             return new ConnectionTune(bytes);
         }
 
-        public bool IsFor(int classId, int methodId)
+        public bool IsFor(short classId, short methodId)
             => ClassId == classId && MethodId == methodId;
 
         public byte[] Marshall()

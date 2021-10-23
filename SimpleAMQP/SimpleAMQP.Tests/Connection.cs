@@ -1,4 +1,6 @@
-﻿using System.Net.Sockets;
+﻿using System.Diagnostics;
+using System.Net.Sockets;
+using System.Runtime.InteropServices.ComTypes;
 using NUnit.Framework;
 using SimpleAMQP.Methods;
 
@@ -64,8 +66,33 @@ namespace SimpleAMQP.Tests
             bytes = new byte[1028];
             _ = sender.Receive(bytes);
 
-            var connectionOpen = new MethodFrame(bytes);
 
+            var exchangeDeclareMethod = new Methods.Exchange.Declare
+            {
+                ExchangeName = "test",
+                IsDurable = false,
+                IsPassive = false,
+                NoWait = false,
+                Type = "direct",
+                Arguments = new FieldTable()
+                {
+                    PeerProperties =
+                    {
+                        {"test", new FieldValue("test")}
+                    }
+                }
+            };
+
+            var exchangeDeclareMethodFrame = new MethodFrame(0, exchangeDeclareMethod);
+
+            var byeee = exchangeDeclareMethodFrame.Marshall();
+
+            foreach (var ereei in byeee)
+            {
+                Debug.WriteLine(ereei);
+            }
+
+            sender.Send(exchangeDeclareMethodFrame.Marshall());
 
         }
     }
