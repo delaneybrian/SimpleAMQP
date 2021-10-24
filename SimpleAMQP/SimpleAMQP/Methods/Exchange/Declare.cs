@@ -39,17 +39,9 @@ namespace SimpleAMQP.Methods.Exchange
 
             bytes.AddRange(Type.ToShortStringBytes());
 
-            bytes.Add(IsPassive.ToByte());
-            
-            bytes.Add(IsDurable.ToByte());
+            var packedBitByte = BitPacker.Pack(IsPassive, IsDurable, false, false, NoWait);
 
-            bytes.Add(0);
-            bytes.Add(0);
-
-            bytes.Add(0);
-            bytes.Add(0);
-
-            bytes.Add(NoWait.ToByte());
+            bytes.Add(packedBitByte);
 
             bytes.AddRange(Arguments.Marshall());
 

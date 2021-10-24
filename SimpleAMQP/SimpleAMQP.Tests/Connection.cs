@@ -1,7 +1,6 @@
-﻿using System.Diagnostics;
-using System.Net.Sockets;
-using System.Runtime.InteropServices.ComTypes;
+﻿using System.Net.Sockets;
 using NUnit.Framework;
+using SimpleAMQP.Frames;
 using SimpleAMQP.Methods;
 
 namespace SimpleAMQP.Tests
@@ -43,8 +42,14 @@ namespace SimpleAMQP.Tests
 
             _ = sender.Send(startOkMethodFrameBytes);
 
+
+
+
             bytes = new byte[1028];
             _ = sender.Receive(bytes);
+
+
+
 
             var connectionTuneMethodFrame = new MethodFrame(bytes);
 
@@ -56,6 +61,9 @@ namespace SimpleAMQP.Tests
             var connectionTuneOkMethodFrame = new MethodFrame(0, connectionTuneOkMethod);
 
             _ = sender.Send(connectionTuneOkMethodFrame.Marshall());
+
+
+
             
             var connectionOpenMethod = ConnectionOpen.Construct(@"/");
 
@@ -63,36 +71,100 @@ namespace SimpleAMQP.Tests
 
             _ = sender.Send(connectionOpenFrame.Marshall());
 
+
+
+
             bytes = new byte[1028];
             _ = sender.Receive(bytes);
 
 
-            var exchangeDeclareMethod = new Methods.Exchange.Declare
+
+
+
+            var channelOpen = new Methods.Channel.Open();
+
+            var channelOpenMethodFrame = new MethodFrame(2, channelOpen);
+
+            _ = sender.Send(channelOpenMethodFrame.Marshall());
+
+
+
+
+
+            //var exchangeDeclareMethod = new Methods.Exchange.Declare
+            //{
+            //    ExchangeName = "test",
+            //    IsDurable = false,
+            //    IsPassive = false,
+            //    NoWait = false,
+            //    Type = "direct",
+            //    Arguments = new FieldTable()
+            //    {
+            //        PeerProperties =
+            //        {
+            //            {"test", new FieldValue("test")}
+            //        }
+            //    }
+            //};
+
+            //var exchangeDeclareMethodFrame = new MethodFrame(2, exchangeDeclareMethod);
+
+            //sender.Send(exchangeDeclareMethodFrame.Marshall());
+
+
+
+            //bytes = new byte[1028];
+            //_ = sender.Receive(bytes);
+
+
+
+            //var queueDeclareMethod = new Methods.Queue.Declare
+            //{
+            //    Name = "testqueue",
+            //    AutoDelete = false,
+            //    Durable = false,
+            //    Exclusive = false,
+            //    NoWait = false,
+            //    Passive = false
+            //};
+
+            //var queueDeclareMethodFrame = new MethodFrame(2, queueDeclareMethod);
+
+            //_ = sender.Send(queueDeclareMethodFrame.Marshall());
+
+
+            //var bindMethod = new Methods.Queue.Bind
+            //{
+            //    ExchangeName = "test",
+            //    NoWait = false,
+            //    QueueName = "testqueue",
+            //    RoutingKey = "hello",
+            //    Arguments = new FieldTable()
+            //};
+
+            //var mf = new MethodFrame(2, bindMethod);
+
+            var basicPublishMethiod = new Methods.Basic.Publish
             {
                 ExchangeName = "test",
-                IsDurable = false,
-                IsPassive = false,
-                NoWait = false,
-                Type = "direct",
-                Arguments = new FieldTable()
-                {
-                    PeerProperties =
-                    {
-                        {"test", new FieldValue("test")}
-                    }
-                }
+                Immediate = false,
+                Mandatory = false,
+                RoutingKey = "hello"
             };
 
-            var exchangeDeclareMethodFrame = new MethodFrame(0, exchangeDeclareMethod);
+            var basicPubFrame = new MethodFrame(2, basicPublishMethiod);
 
-            var byeee = exchangeDeclareMethodFrame.Marshall();
+            _ = sender.Send(basicPubFrame.Marshall());
 
-            foreach (var ereei in byeee)
+            var contentHeaderFrame = new ContentHeaderFrame
             {
-                Debug.WriteLine(ereei);
-            }
+                ClassId = 60,
+                BodySize = 12,
+                Channel = 2,
+            };
 
-            sender.Send(exchangeDeclareMethodFrame.Marshall());
+            _ = sender.Send(contentHeaderFrame.Marshall());
+
 
         }
     }

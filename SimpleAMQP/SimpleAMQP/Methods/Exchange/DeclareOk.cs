@@ -1,10 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SimpleAMQP.Methods.Exchange
 {
-    class DeclareOk
+    internal class DeclareOk : IDeMarshallableMethod
     {
+        public short ClassId => 40;
+
+        public short MethodId => 11;
+
+        public void DeMarshall(Span<byte> bytes)
+        {
+            
+        }
     }
 }
