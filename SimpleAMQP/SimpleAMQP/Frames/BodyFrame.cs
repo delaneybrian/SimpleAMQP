@@ -5,7 +5,7 @@ namespace SimpleAMQP.Frames
 {
     internal class BodyFrame
     {
-        public FrameType Type { get; set; } = FrameType.Body;
+        public FrameType Type { get; } = FrameType.Body;
 
         public short Channel { get; set; }
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using SimpleAMQP.Ex;
 
-namespace SimpleAMQP
+namespace SimpleAMQP.Methods
 {
     internal class FieldArray
     {

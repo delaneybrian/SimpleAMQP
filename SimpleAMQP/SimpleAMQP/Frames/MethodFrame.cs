@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Runtime.InteropServices.ComTypes;
 using SimpleAMQP.Ex;
 using SimpleAMQP.Frames;
 using SimpleAMQP.Methods;
@@ -46,19 +44,19 @@ namespace SimpleAMQP
             var methodBytes = bytes.Slice(0, size);
 
             if (MethodId == 10)
-                Method = ConnectionStart.Construct(methodBytes);
+                Method = Methods.Connection.Start.Construct(methodBytes);
 
             if (MethodId == 20)
-                Method = ConnectionSecure.Construct(methodBytes);
+                Method = Methods.Connection.Secure.Construct(methodBytes);
 
             if (MethodId == 30)
-                Method = ConnectionTune.Construct(methodBytes);
+                Method = Methods.Connection.Tune.Construct(methodBytes);
 
             if (MethodId == 31)
-                Method = ConnectionTuneOk.Construct(methodBytes);
+                Method = Methods.Connection.TuneOk.Construct(methodBytes);
 
             if (MethodId == 41)
-                Method = ConnectionOpenOk.Construct(methodBytes);
+                Method = Methods.Connection.OpenOk.Construct(methodBytes);
         }
 
         public byte[] Marshall()

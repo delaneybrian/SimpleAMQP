@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using SimpleAMQP.Ex;
 
-namespace SimpleAMQP
+namespace SimpleAMQP.Methods
 {
     internal class FieldValue
     {

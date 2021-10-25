@@ -1,9 +1,9 @@
 ﻿using System;
 using SimpleAMQP.Ex;
 
-namespace SimpleAMQP.Methods
+namespace SimpleAMQP.Methods.Connection
 {
-    internal class ConnectionSecure : IMarshallableMethod
+    internal class Secure : IMarshallableMethod
     {
         public short ClassId => 10;
 
@@ -11,7 +11,7 @@ namespace SimpleAMQP.Methods
 
         public string Challenge { get; private set; }
 
-        public ConnectionSecure(Span<byte> bytes)
+        public Secure(Span<byte> bytes)
         {
             bytes = bytes.ExtractLongString(out var challenge);
 
@@ -20,7 +20,7 @@ namespace SimpleAMQP.Methods
 
         public static IMarshallableMethod Construct(Span<byte> bytes)
         {
-            return new ConnectionSecure(bytes);
+            return new Secure(bytes);
         }
 
         public bool IsFor(short classId, short methodId)

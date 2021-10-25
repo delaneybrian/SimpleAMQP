@@ -40,7 +40,7 @@ namespace SimpleAMQP.Frames
 
             contentBytes.AddRange(noProperties.ToBytes());
             
-            var size = (long) contentBytes.Count;
+            var size = contentBytes.Count;
 
             bytes.AddRange(size.ToBytes());
 

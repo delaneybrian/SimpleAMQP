@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using SimpleAMQP.Ex;
 
-namespace SimpleAMQP
+namespace SimpleAMQP.Methods
 {
     internal class FieldTable
     {

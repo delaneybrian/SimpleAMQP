@@ -27,13 +27,13 @@ namespace SimpleAMQP.Tests
 
             var methodFrame = new MethodFrame(bytes);
 
-            var connectionStartMethod = methodFrame.Method as ConnectionStart;
+            var connectionStartMethod = methodFrame.Method as Methods.Connection.Start;
 
             var fieldTable = new FieldTable();
 
             fieldTable.Add("information", new FieldValue("Licensed under the MPL 2.0. Website: https://rabbitmq.com"));
 
-            var connectionStartOk = new ConnectionStartOk(fieldTable, "PLAIN", "\0guest\0guest",
+            var connectionStartOk = new Methods.Connection.StartOk(fieldTable, "PLAIN", "\0guest\0guest",
                 connectionStartMethod.Locals);
 
             var startOkMethodFrame = new MethodFrame(0, connectionStartOk);
@@ -53,9 +53,9 @@ namespace SimpleAMQP.Tests
 
             var connectionTuneMethodFrame = new MethodFrame(bytes);
 
-            var connectionTuneMethod = connectionTuneMethodFrame.Method as ConnectionTune;
+            var connectionTuneMethod = connectionTuneMethodFrame.Method as Methods.Connection.Tune;
 
-            var connectionTuneOkMethod = ConnectionTuneOk.Construct(connectionTuneMethod.MaxChannels,
+            var connectionTuneOkMethod = Methods.Connection.TuneOk.Construct(connectionTuneMethod.MaxChannels,
                 connectionTuneMethod.MaxFrameSize, connectionTuneMethod.HeartBeatDelay);
 
             var connectionTuneOkMethodFrame = new MethodFrame(0, connectionTuneOkMethod);
@@ -65,7 +65,7 @@ namespace SimpleAMQP.Tests
 
 
             
-            var connectionOpenMethod = ConnectionOpen.Construct(@"/");
+            var connectionOpenMethod = Methods.Connection.Open.Construct(@"/");
 
             var connectionOpenFrame = new MethodFrame(0, connectionOpenMethod);
 
@@ -163,8 +163,22 @@ namespace SimpleAMQP.Tests
                 Channel = 2,
             };
 
-            _ = sender.Send(contentHeaderFrame.Marshall());
+            var contentHeaderFrameBytes = contentHeaderFrame.Marshall();
 
+            _ = sender.Send(contentHeaderFrameBytes);
+
+            var bodyFrame = new BodyFrame
+            {
+                Body = new byte[]
+                {
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+                },
+                Channel = 2
+            };
+
+            var bodyFrameBytes = bodyFrame.Marshall();
+
+            _ = sender.Send(bodyFrameBytes);
 
         }
     }

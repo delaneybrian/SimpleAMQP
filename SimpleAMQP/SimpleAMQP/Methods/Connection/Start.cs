@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using SimpleAMQP.Ex;
-using SimpleAMQP.Methods;
 
-namespace SimpleAMQP
+namespace SimpleAMQP.Methods.Connection
 {
-    internal class ConnectionStart : IMarshallableMethod
+    internal class Start : IMarshallableMethod
     {
         public byte MajorVersion { get; private set; }
 
@@ -31,10 +30,10 @@ namespace SimpleAMQP
 
         public static IMarshallableMethod Construct(Span<byte> bytes)
         {
-            return new ConnectionStart(bytes);
+            return new Start(bytes);
         }
 
-        private ConnectionStart(Span<byte> bytes)
+        private Start(Span<byte> bytes)
         {
             MajorVersion = bytes[4];
             MinorVersion = bytes[5];

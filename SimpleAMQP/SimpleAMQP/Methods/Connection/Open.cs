@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using SimpleAMQP.Ex;
 
-namespace SimpleAMQP.Methods
+namespace SimpleAMQP.Methods.Connection
 {
-    internal class ConnectionOpen : IMarshallableMethod
+    internal class Open : IMarshallableMethod
     {
         public short ClassId => 10;
 
@@ -11,14 +11,14 @@ namespace SimpleAMQP.Methods
 
         public string Path { get; private set; }
 
-        private ConnectionOpen(string path)
+        private Open(string path)
         {
             Path = path;
         }
 
         public static IMarshallableMethod Construct(string path)
         {
-            return new ConnectionOpen(path);
+            return new Open(path);
         }
 
         public bool IsFor(short classId, short methodId) =>

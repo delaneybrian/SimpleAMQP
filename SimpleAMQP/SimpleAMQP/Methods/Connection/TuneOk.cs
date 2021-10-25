@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using SimpleAMQP.Ex;
 
-namespace SimpleAMQP.Methods
+namespace SimpleAMQP.Methods.Connection
 {
-    internal class ConnectionTuneOk : IMarshallableMethod
+    internal class TuneOk : IMarshallableMethod
     {
         public short ClassId => 10;
 
@@ -16,14 +16,14 @@ namespace SimpleAMQP.Methods
 
         public short HeartBeatDelay { get; private set; }
 
-        private ConnectionTuneOk(short maxChannels, int maxFrameSize, short heartBeatDelay)
+        private TuneOk(short maxChannels, int maxFrameSize, short heartBeatDelay)
         {
             MaxChannels = maxChannels;
             MaxFrameSize = maxFrameSize;
             HeartBeatDelay = heartBeatDelay;
         }
 
-        private ConnectionTuneOk(Span<byte> bytes)
+        private TuneOk(Span<byte> bytes)
         {
             bytes = bytes.ExtractShortInt(out var maxChannels);
             MaxChannels = maxChannels;
@@ -38,7 +38,7 @@ namespace SimpleAMQP.Methods
         public static IMarshallableMethod Construct(
             Span<byte> bytes)
         {
-            return new ConnectionTuneOk(bytes);
+            return new TuneOk(bytes);
         }
 
         public static IMarshallableMethod Construct(
@@ -46,7 +46,7 @@ namespace SimpleAMQP.Methods
             int maxFrameSize, 
             short heartBeatDelay)
         {
-            return new ConnectionTuneOk(maxChannels, maxFrameSize, heartBeatDelay);
+            return new TuneOk(maxChannels, maxFrameSize, heartBeatDelay);
         }
 
         public bool IsFor(short classId, short methodId)

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using SimpleAMQP.Ex;
-using SimpleAMQP.Methods;
 
-namespace SimpleAMQP
+namespace SimpleAMQP.Methods.Connection
 {
-    internal class ConnectionStartOk : IMarshallableMethod
+    internal class StartOk : IMarshallableMethod
     {
         public short ClassId => 10;
 
@@ -19,7 +18,7 @@ namespace SimpleAMQP
 
         public string Locale { get; set; }
 
-        public ConnectionStartOk(
+        public StartOk(
             FieldTable clientProperties,
             string mechanism,
             string response,

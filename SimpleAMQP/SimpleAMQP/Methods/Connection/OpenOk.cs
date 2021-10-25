@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace SimpleAMQP.Methods
+namespace SimpleAMQP.Methods.Connection
 {
-    internal class ConnectionOpenOk : IMarshallableMethod
+    internal class OpenOk : IMarshallableMethod
     {
         public short ClassId => 10;
 
@@ -11,14 +11,14 @@ namespace SimpleAMQP.Methods
         public bool IsFor(short classId, short methodId) =>
             classId == ClassId && methodId == MethodId;
 
-        private ConnectionOpenOk(Span<byte> bytes)
+        private OpenOk(Span<byte> bytes)
         {
             
         }
 
         public static IMarshallableMethod Construct(Span<byte> bytes)
         {
-            return new ConnectionOpenOk(bytes);
+            return new OpenOk(bytes);
         }
 
         public byte[] Marshall()

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace SimpleAMQP.Methods
+namespace SimpleAMQP.Methods.Connection
 {
-    internal class ConnectionSecureOk : IMarshallableMethod
+    internal class SecureOk : IMarshallableMethod
     {
         public short ClassId => 10;
 

@@ -1,9 +1,9 @@
 ﻿using System;
 using SimpleAMQP.Ex;
 
-namespace SimpleAMQP.Methods
+namespace SimpleAMQP.Methods.Connection
 {
-    internal class ConnectionTune : IMarshallableMethod
+    internal class Tune : IMarshallableMethod
     {
         public short ClassId => 10;
 
@@ -15,7 +15,7 @@ namespace SimpleAMQP.Methods
 
         public short HeartBeatDelay { get; private set; }
 
-        private ConnectionTune(Span<byte> bytes)
+        private Tune(Span<byte> bytes)
         {
             bytes = bytes.Slice(4);
 
@@ -34,7 +34,7 @@ namespace SimpleAMQP.Methods
 
         public static IMarshallableMethod Construct(Span<byte> bytes)
         {
-            return new ConnectionTune(bytes);
+            return new Tune(bytes);
         }
 
         public bool IsFor(short classId, short methodId)
