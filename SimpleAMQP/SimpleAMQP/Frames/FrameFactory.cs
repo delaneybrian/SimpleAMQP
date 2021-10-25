@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SimpleAMQP.Frames
 {
-    internal class FrameFactory
+    internal static class FrameFactory
     {
 
 

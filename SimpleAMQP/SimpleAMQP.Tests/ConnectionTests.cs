@@ -6,7 +6,7 @@ using SimpleAMQP.Methods;
 namespace SimpleAMQP.Tests
 {
     [TestFixture]
-    public class Connection
+    public class ConnectionTests
     {
         [Test]
         public void Tester()

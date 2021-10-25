@@ -17,13 +17,11 @@ namespace SimpleAMQP.Tests
 
             var stream = tcpClient.GetStream();
 
-            var sender = stream.Socket;
-
             var protocolHeaderBytes = new byte[] { 65, 77, 81, 80, 0, 0, 9, 1 };
 
-            _ = sender.Send(protocolHeaderBytes);
+            stream.Write(protocolHeaderBytes);
 
-            _ = sender.Receive(bytes);
+            _ = stream.Read(bytes);
 
             var methodFrame = new MethodFrame(bytes);
 
@@ -40,13 +38,13 @@ namespace SimpleAMQP.Tests
 
             var startOkMethodFrameBytes = startOkMethodFrame.Marshall();
 
-            _ = sender.Send(startOkMethodFrameBytes);
+            stream.Write(startOkMethodFrameBytes);
 
 
 
 
             bytes = new byte[1028];
-            _ = sender.Receive(bytes);
+            _ = stream.Read(bytes);
 
 
 
@@ -60,7 +58,7 @@ namespace SimpleAMQP.Tests
 
             var connectionTuneOkMethodFrame = new MethodFrame(0, connectionTuneOkMethod);
 
-            _ = sender.Send(connectionTuneOkMethodFrame.Marshall());
+            stream.Write(connectionTuneOkMethodFrame.Marshall());
 
 
 
@@ -69,13 +67,13 @@ namespace SimpleAMQP.Tests
 
             var connectionOpenFrame = new MethodFrame(0, connectionOpenMethod);
 
-            _ = sender.Send(connectionOpenFrame.Marshall());
+            stream.Write(connectionOpenFrame.Marshall());
 
 
 
 
             bytes = new byte[1028];
-            _ = sender.Receive(bytes);
+            _ = stream.Read(bytes);
 
 
 
@@ -85,11 +83,11 @@ namespace SimpleAMQP.Tests
 
             var channelOpenMethodFrame = new MethodFrame(2, channelOpen);
 
-            _ = sender.Send(channelOpenMethodFrame.Marshall());
+            stream.Write(channelOpenMethodFrame.Marshall());
 
 
             bytes = new byte[1028];
-            _ = sender.Receive(bytes);
+            _ = stream.Read(bytes);
 
 
             var get = new Methods.Basic.Get
@@ -102,11 +100,11 @@ namespace SimpleAMQP.Tests
 
             var getMethodFrameBytes = getMethodFrame.Marshall();
 
-            _ = sender.Send(getMethodFrameBytes);
+            stream.Write(getMethodFrameBytes);
 
 
             bytes = new byte[1028];
-            _ = sender.Receive(bytes);
+            _ = stream.Read(bytes);
 
 
 
