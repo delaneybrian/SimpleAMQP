@@ -1,5 +1,4 @@
-﻿using System.Net.Sockets;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SimpleAMQP.Frames;
 using SimpleAMQP.Methods;
 
@@ -11,84 +10,11 @@ namespace SimpleAMQP.Tests
         [Test]
         public void Tester()
         {
-            byte[] bytes = new byte[1028];
+            using var connection = new Connection();
 
-            var tcpClient = new TcpClient("localhost", 5672);
+            connection.Start();
 
-            var stream = tcpClient.GetStream();
-
-            var sender = stream.Socket;
-
-            var protocolHeaderBytes = new byte[] { 65, 77, 81, 80, 0, 0, 9, 1 };
-
-            _ = sender.Send(protocolHeaderBytes);
-            
-            _ = sender.Receive(bytes);
-
-            var methodFrame = new MethodFrame(bytes);
-
-            var connectionStartMethod = methodFrame.Method as Methods.Connection.Start;
-
-            var fieldTable = new FieldTable();
-
-            fieldTable.Add("information", new FieldValue("Licensed under the MPL 2.0. Website: https://rabbitmq.com"));
-
-            var connectionStartOk = new Methods.Connection.StartOk(fieldTable, "PLAIN", "\0guest\0guest",
-                connectionStartMethod.Locals);
-
-            var startOkMethodFrame = new MethodFrame(0, connectionStartOk);
-
-            var startOkMethodFrameBytes = startOkMethodFrame.Marshall();
-
-            _ = sender.Send(startOkMethodFrameBytes);
-
-
-
-
-            bytes = new byte[1028];
-            _ = sender.Receive(bytes);
-
-
-
-
-            var connectionTuneMethodFrame = new MethodFrame(bytes);
-
-            var connectionTuneMethod = connectionTuneMethodFrame.Method as Methods.Connection.Tune;
-
-            var connectionTuneOkMethod = Methods.Connection.TuneOk.Construct(connectionTuneMethod.MaxChannels,
-                connectionTuneMethod.MaxFrameSize, connectionTuneMethod.HeartBeatDelay);
-
-            var connectionTuneOkMethodFrame = new MethodFrame(0, connectionTuneOkMethod);
-
-            _ = sender.Send(connectionTuneOkMethodFrame.Marshall());
-
-
-
-            
-            var connectionOpenMethod = Methods.Connection.Open.Construct(@"/");
-
-            var connectionOpenFrame = new MethodFrame(0, connectionOpenMethod);
-
-            _ = sender.Send(connectionOpenFrame.Marshall());
-
-
-
-
-            bytes = new byte[1028];
-            _ = sender.Receive(bytes);
-
-
-
-
-
-            var channelOpen = new Methods.Channel.Open();
-
-            var channelOpenMethodFrame = new MethodFrame(2, channelOpen);
-
-            _ = sender.Send(channelOpenMethodFrame.Marshall());
-
-
-
+            var channel = connection.CreateChannel();
 
 
             //var exchangeDeclareMethod = new Methods.Exchange.Declare
@@ -109,13 +35,11 @@ namespace SimpleAMQP.Tests
 
             //var exchangeDeclareMethodFrame = new MethodFrame(2, exchangeDeclareMethod);
 
-            //sender.Send(exchangeDeclareMethodFrame.Marshall());
+            //channel.Send(exchangeDeclareMethodFrame);
 
 
 
-            //bytes = new byte[1028];
-            //_ = sender.Receive(bytes);
-
+            //var bytes = channel.Receive();
 
 
             //var queueDeclareMethod = new Methods.Queue.Declare
@@ -130,7 +54,7 @@ namespace SimpleAMQP.Tests
 
             //var queueDeclareMethodFrame = new MethodFrame(2, queueDeclareMethod);
 
-            //_ = sender.Send(queueDeclareMethodFrame.Marshall());
+            //channel.Send(queueDeclareMethodFrame);
 
 
             //var bindMethod = new Methods.Queue.Bind
@@ -142,7 +66,11 @@ namespace SimpleAMQP.Tests
             //    Arguments = new FieldTable()
             //};
 
-            //var mf = new MethodFrame(2, bindMethod);
+            //var bindMethodMethodFrame = new MethodFrame(2, bindMethod);
+
+            //channel.Send(bindMethodMethodFrame);
+
+            var sds = channel.Receive();
 
             var basicPublishMethiod = new Methods.Basic.Publish
             {
@@ -154,7 +82,7 @@ namespace SimpleAMQP.Tests
 
             var basicPubFrame = new MethodFrame(2, basicPublishMethiod);
 
-            _ = sender.Send(basicPubFrame.Marshall());
+            channel.Send(basicPubFrame);
 
             var contentHeaderFrame = new ContentHeaderFrame
             {
@@ -163,23 +91,19 @@ namespace SimpleAMQP.Tests
                 Channel = 2,
             };
 
-            var contentHeaderFrameBytes = contentHeaderFrame.Marshall();
+            channel.Send(contentHeaderFrame);
 
-            _ = sender.Send(contentHeaderFrameBytes);
+            var body = new byte[131072];
 
             var bodyFrame = new BodyFrame
             {
-                Body = new byte[]
-                {
-                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-                },
+                Body = new byte[]{1,3,4,5,6,7,8,9,5},
                 Channel = 2
             };
 
-            var bodyFrameBytes = bodyFrame.Marshall();
+            channel.Send(bodyFrame);
 
-            _ = sender.Send(bodyFrameBytes);
-
+            var a = channel.Receive();
         }
     }
 }

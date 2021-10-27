@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using SimpleAMQP.Methods;
 
@@ -18,6 +19,8 @@ namespace SimpleAMQP
 
         public int MaxFrameSize { get; private set; }
 
+        private readonly HashSet<short> _channelsInUse = new HashSet<short>();
+
         public void Dispose()
         {
             _stream.Dispose();
@@ -33,7 +36,18 @@ namespace SimpleAMQP
 
         public Channel CreateChannel()
         {
-            return new Channel();
+            var channel = new Channel();
+
+            channel.OpenChannel(this, 2);
+
+            return channel;
+        }
+
+        public byte[] Read()
+        {
+            _stream.Read(_buffer);
+
+            return _buffer;
         }
 
         public void Start()
@@ -46,8 +60,6 @@ namespace SimpleAMQP
 
             _ = _stream.Read(_buffer);
 
-
-            
             var connectionStartMethodFrame = new MethodFrame(_buffer);
 
             var connectionStartMethod = connectionStartMethodFrame.Method as Methods.Connection.Start;
@@ -61,13 +73,16 @@ namespace SimpleAMQP
 
             _stream.Write(connectionStartOkMethodFrameBytes);
 
-
             _buffer = new byte[1028];
             _ = _stream.Read(_buffer);
 
             var connectionTuneMethodFrame = new MethodFrame(_buffer);
 
             var connectionTuneMethod = connectionTuneMethodFrame.Method as Methods.Connection.Tune;
+
+            MaxChannels = connectionTuneMethod.MaxChannels;
+
+            MaxFrameSize = connectionTuneMethod.MaxFrameSize;
 
             var connectionTuneOkMethod = Methods.Connection.TuneOk.Construct(connectionTuneMethod.MaxChannels,
                 connectionTuneMethod.MaxFrameSize, connectionTuneMethod.HeartBeatDelay);
@@ -82,12 +97,8 @@ namespace SimpleAMQP
 
             _stream.Write(connectionOpenFrame.Marshall());
 
-
-
-
             _buffer = new byte[1028];
             _ = _stream.Read(_buffer);
-
         }
     }
 }

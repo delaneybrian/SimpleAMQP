@@ -1,4 +1,5 @@
-﻿using SimpleAMQP.Frames;
+﻿using System;
+using SimpleAMQP.Frames;
 
 namespace SimpleAMQP
 {
@@ -6,23 +7,29 @@ namespace SimpleAMQP
     {
         private Connection _connection;
 
-        public void Start(Connection connection)
-        {
-            _connection = connection;
-        }
-
-        public void OpenChannel(int channelNumber)
+        public void OpenChannel(Connection connection, int channelNumber)
         {
             var channelOpen = new Methods.Channel.Open();
 
             var channelOpenMethodFrame = new MethodFrame(2, channelOpen);
 
+            _connection = connection;
+
             _connection.Send(channelOpenMethodFrame.Marshall());
+
+            var bytes = _connection.Read();
+
+            var channelOkayMethodFrame = new MethodFrame(bytes);
         }
 
         public void Send(IFrame frame)
         {
             _connection.Send(frame.Marshall());
+        }
+
+        public Span<byte> Receive()
+        {
+            return _connection.Read();
         }
     }
 }

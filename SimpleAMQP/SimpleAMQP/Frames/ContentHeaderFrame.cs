@@ -3,7 +3,7 @@ using SimpleAMQP.Ex;
 
 namespace SimpleAMQP.Frames
 {
-    internal class ContentHeaderFrame
+    internal class ContentHeaderFrame : IFrame
     {
         public FrameType Type { get; set; } = FrameType.Header;
 

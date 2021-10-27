@@ -6,7 +6,7 @@ using SimpleAMQP.Methods;
 
 namespace SimpleAMQP
 {
-    internal class MethodFrame
+    internal class MethodFrame : IFrame
     {
         public FrameType Type { get; set; } = FrameType.Method;
 

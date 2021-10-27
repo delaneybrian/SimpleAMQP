@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SimpleAMQP.Frames
 {
-    internal class BodyFrame
+    internal class BodyFrame : IFrame
     {
         public FrameType Type { get; } = FrameType.Body;
 
