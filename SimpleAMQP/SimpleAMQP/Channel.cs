@@ -16,10 +16,6 @@ namespace SimpleAMQP
             _connection = connection;
 
             _connection.Send(channelOpenMethodFrame.Marshall());
-
-            var bytes = _connection.Read();
-
-            var channelOkayMethodFrame = new MethodFrame(bytes);
         }
 
         public void Send(IFrame frame)

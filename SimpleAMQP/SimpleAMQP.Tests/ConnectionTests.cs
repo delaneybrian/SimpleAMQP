@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using SimpleAMQP.Frames;
 using SimpleAMQP.Methods;
 
@@ -72,6 +73,8 @@ namespace SimpleAMQP.Tests
 
             var sds = channel.Receive();
 
+            var sds2 = channel.Receive();
+
             var basicPublishMethiod = new Methods.Basic.Publish
             {
                 ExchangeName = "test",
@@ -93,15 +96,30 @@ namespace SimpleAMQP.Tests
 
             channel.Send(contentHeaderFrame);
 
-            var body = new byte[131072];
+            var bodyBytes = new Span<byte>(new byte[131073]);
 
-            var bodyFrame = new BodyFrame
+            //Need to split up the message with a max size of 131072
+
+            var maxBytesPerMessage = 131072;
+
+            while (bodyBytes.Length > 0)
             {
-                Body = new byte[]{1,3,4,5,6,7,8,9,5},
-                Channel = 2
-            };
+                var maxRemainingBytes = bodyBytes.Length > maxBytesPerMessage
+                    ? maxBytesPerMessage
+                    : bodyBytes.Length;
 
-            channel.Send(bodyFrame);
+                var currentMessageBytes = bodyBytes.Slice(0, maxRemainingBytes);
+
+                var bodyFrame = new BodyFrame
+                {
+                    Body = currentMessageBytes.ToArray(),
+                    Channel = 2
+                };
+
+                channel.Send(bodyFrame);
+
+                bodyBytes = bodyBytes.Slice(maxRemainingBytes);
+            }
 
             var a = channel.Receive();
         }
